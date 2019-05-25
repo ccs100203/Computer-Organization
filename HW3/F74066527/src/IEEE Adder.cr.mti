@@ -1,0 +1,16 @@
+{D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v} {1 {vlog -work work -stats=none {D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v}
+Model Technology ModelSim PE Student Edition vlog 10.4a Compiler 2015.03 Apr  7 2015
+-- Compiling module fpadder
+
+Top level modules:
+	fpadder
+
+} {} {}} {D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v} {1 {vlog -work work -stats=none {D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v}
+Model Technology ModelSim PE Student Edition vlog 10.4a Compiler 2015.03 Apr  7 2015
+-- Compiling module fpadder
+-- Compiling module top_tb
+
+Top level modules:
+	top_tb
+
+} {} {}}

@@ -1,0 +1,29 @@
+{D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v} {0 {vlog -work work -stats=none {D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v}
+Model Technology ModelSim PE Student Edition vlog 10.4a Compiler 2015.03 Apr  7 2015
+-- Compiling module fpadder
+** Error: (vlog-13069) D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v(60): near "0": syntax error, unexpected INTEGER NUMBER, expecting ':'.
+
+** Error: (vlog-13069) D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v(67): near "2": syntax error, unexpected INTEGER NUMBER.
+
+** Error: (vlog-13069) D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v(70): near "=": syntax error, unexpected '='.
+
+** Error: D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder.v(70): (vlog-13205) Syntax error found in the scope following 'expSub'. Is there a missing '::'?
+
+
+} {4.0 5.0 6.0 7.0 8.0 9.0 10.0 11.0} {}} {D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v} {0 {vlog -work work -stats=none {D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v}
+Model Technology ModelSim PE Student Edition vlog 10.4a Compiler 2015.03 Apr  7 2015
+-- Compiling module fpadder
+** Error: (vlog-13069) ** while parsing file included at D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v(2)
+** at fpadder.v(60): near "0": syntax error, unexpected INTEGER NUMBER, expecting ':'.
+
+** Error: (vlog-13069) ** while parsing file included at D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v(2)
+** at fpadder.v(67): near "2": syntax error, unexpected INTEGER NUMBER.
+
+** Error: (vlog-13069) ** while parsing file included at D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v(2)
+** at fpadder.v(70): near "=": syntax error, unexpected '='.
+
+** Error: ** while parsing file included at D:/ShaoTse/Homework/Computer Organization/HW3/F74066527/src/fpadder_tb.v(2)
+** at fpadder.v(70): (vlog-13205) Syntax error found in the scope following 'expSub'. Is there a missing '::'?
+
+
+} {4.0 5.0 7.0 8.0 10.0 11.0 13.0 14.0} {}}
