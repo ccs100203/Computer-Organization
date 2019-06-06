@@ -108,6 +108,7 @@ int main(int argc, char **argv){
             // cout <<"  "<< index_i << endl;
         }else if(associativity == 2){ //fully-way
             // cout<< tag_i <<endl;
+            // cout<< vec.size() <<endl;
             for(int i=0; i<index_len; ++i){ //exist
                 if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
                     vec.at(i).time = times;
@@ -130,8 +131,8 @@ int main(int argc, char **argv){
             if(flag) continue;
             int min_val=99999, min_ind=0;
             for(int i=0; i<index_len; ++i){ //miss
-                min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
                 min_ind = ( vec.at(i).time < min_val)? i : min_ind;
+                min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
             }
             fout << vec.at(min_ind).tag << endl;
             vec.at(min_ind).time = times;
@@ -161,8 +162,8 @@ int main(int argc, char **argv){
             if(flag) continue;
             int min_val=99999, min_ind=0;
             for(int i =search; i<search+4; ++i){ //miss
-                min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
                 min_ind = ( vec.at(i).time < min_val)? i : min_ind;
+                min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
             }
             fout << vec.at(min_ind).tag << endl;
             vec.at(min_ind).time = times;
