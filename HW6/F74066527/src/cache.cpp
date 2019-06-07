@@ -106,7 +106,7 @@ int main(int argc, char **argv){
                 vec.at(index_i).tag = tag_i;
             }
             // cout <<"  "<< index_i << endl;
-        }else if(false || associativity == 2){ //fully-way
+        }else if(false && associativity == 2){ //fully-way
             // cout<< tag_i <<endl;
             // cout<< vec.size() <<endl;
             for(int i=0; i<index_len; ++i){ //exist
@@ -147,7 +147,7 @@ int main(int argc, char **argv){
                 search = 0;
                 end = index_len;
             }
-            for(int i =search; i<search+4; ++i){ //exist
+            for(int i =search; i<end; ++i){ //exist
                 if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
                     vec.at(i).time = times;
                     fout << -1 << endl;
@@ -156,7 +156,7 @@ int main(int argc, char **argv){
                 }
             }
             if(flag) continue;
-            for(int i =search; i<search+4; ++i){ //has empty block
+            for(int i =search; i<end; ++i){ //has empty block
                 if(vec.at(i).valid == 0){
                     vec.at(i).valid = 1;
                     vec.at(i).tag = tag_i;
@@ -168,7 +168,7 @@ int main(int argc, char **argv){
             }
             if(flag) continue;
             int min_val=99999, min_ind=0;
-            for(int i =search; i<search+4; ++i){ //miss
+            for(int i =search; i<end; ++i){ //miss
                 min_ind = ( vec.at(i).time < min_val)? i : min_ind;
                 min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
             }
