@@ -157,13 +157,17 @@ int main(int argc, char **argv){
                 //     min_val = ( vec.at(i).fre < min_val)? vec.at(i).fre : min_val;
                 //     if(min_val == 1) break;
                 // }
-                int min_val=99999, min_ind=0;
                 int big;
-                big = (index_vec.size() < 200)? index_vec.size() : 200;
+                // cout << index_vec.size()<<endl;
+                // big = (index_vec.size() < 1000)? index_vec.size() : 1000;
+                big = index_vec.size();
                 for(int i =search; i<end; ++i){
                     for(int j=0; j<big; ++j){
-                        if(i==index_vec.at(j) && vec.at(i).tag==tag_vec.at(j))
-                            vec.at(i).future+=1;
+                        if(i==index_vec.at(j) && vec.at(i).tag==tag_vec.at(j)){
+                            vec.at(i).future = j;
+                            continue;
+                            // cout << vec.at(i).future<<endl;
+                        }
                     }
                     min_ind = ( vec.at(i).future < min_val)? i : min_ind;
                     min_val = ( vec.at(i).future < min_val)? vec.at(i).future : min_val;
