@@ -33,7 +33,7 @@ int main(int argc, char **argv){
     if(!fin || !fout) cerr << "Not File" << endl;
     int cache_size; //KB
     int block_size; //Byte
-    int associativity;
+    int associativity;  //direct-mapped=0, 4-way=1, fully associative=2
     int replacement; // FIFO=0 , LRU=1, Your Policy=2
     int index_len;
     int index_bit;
@@ -106,6 +106,7 @@ int main(int argc, char **argv){
             for(int i =search; i<end; ++i){ //exist
                 if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
                     if(replacement != 0) vec.at(i).time = times;
+                    vec.at(i).fre += 1;
                     fout << -1 << endl;
                     flag = true;
                     break;
@@ -117,6 +118,7 @@ int main(int argc, char **argv){
                     vec.at(i).valid = 1;
                     vec.at(i).tag = tag_i;
                     vec.at(i).time = times;
+                    vec.at(i).fre = 1;
                     fout << -1 << endl;
                     flag = true;
                     break;
@@ -124,12 +126,21 @@ int main(int argc, char **argv){
             }
             if(flag) continue;
             int min_val=99999, min_ind=0;
-            for(int i =search; i<end; ++i){ //miss
-                min_ind = ( vec.at(i).time < min_val)? i : min_ind;
-                min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
+            if(replacement != 2){ //miss FIFO and LRU
+                for(int i =search; i<end; ++i){
+                    min_ind = ( vec.at(i).time < min_val)? i : min_ind;
+                    min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
+                }
+            }else{ //miss LFU
+                for(int i =search; i<end; ++i){
+                    min_ind = ( vec.at(i).fre < min_val)? i : min_ind;
+                    min_val = ( vec.at(i).fre < min_val)? vec.at(i).fre : min_val;
+                    if(min_val == 1) break;
+                }
             }
             fout << vec.at(min_ind).tag << endl;
             vec.at(min_ind).time = times;
+            vec.at(min_ind).fre = 1;
             vec.at(min_ind).tag = tag_i;
         }
     }
