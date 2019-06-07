@@ -7,15 +7,13 @@
 #include <vector>
 using namespace std;
 
-string hex_char_to_bin(char c);
-string hex_str_to_bin_str(const std::string& hex);
-
 class block {
     public:
         int index;
         int tag;
         int offset;
-        int time;
+        int time; //record last use time
+        int fre; //record use frequence
         int valid;
         block(int i){
             this->index = i;
@@ -23,6 +21,7 @@ class block {
             this->offset = 0;
             this->time = 0;
             this->valid = 0;
+            this->fre = 0;
         }
 };
 
@@ -39,10 +38,7 @@ int main(int argc, char **argv){
     int index_len;
     int index_bit;
 
-    fin >> cache_size;
-    fin >> block_size;
-    fin >> associativity;
-    fin >> replacement;
+    fin >> cache_size >> block_size >> associativity >> replacement;
     cout << "cache_size: " << cache_size << endl;
     cout << "block_size: " << block_size << endl;
     cout << "associativity: " << associativity << endl;
@@ -69,76 +65,36 @@ int main(int argc, char **argv){
     int times = 0;
     bool flag = false;
     while(fin >> str_h){
-        // cout << times << endl;
         flag = false;
         times++;
         ss << hex << str_h;
         unsigned unsign;
         ss >> unsign;
         bitset<32> bin(unsign);
-        // fout << bin << endl;
         ss.clear();
 
         string index_s="";
         string tag_s="";
         int index_i=0;
         int tag_i=0;
-        for(int i=31; i > 31-tag_bit; --i){
+
+        for(int i=31; i > 31-tag_bit; --i)
             tag_s += to_string(bin[i]);
-        }
-        for(int i=31-tag_bit; i >= offset_bit; --i){
+        for(int i=31-tag_bit; i >= offset_bit; --i)
             index_s += to_string(bin[i]);
-            // cout << int(bin[i]) << endl;
-        }
-        if(index_s != "")
-            index_i = stoi(index_s, nullptr, 2);
+        if(index_s != "") index_i = stoi(index_s, nullptr, 2);
         tag_i = stoi(tag_s, nullptr, 2);
-        // cout <<tag_i <<endl;
+
         if(associativity == 0){ //1-way
-            
             if(vec.at(index_i).valid == 0 || vec.at(index_i).tag == tag_i){ //hit
                 vec.at(index_i).valid = 1;
                 vec.at(index_i).tag = tag_i;
                 fout << -1 << endl;
-            }
-            else{ //miss
+            }else{ //miss
                 fout << vec.at(index_i).tag << endl;
                 vec.at(index_i).tag = tag_i;
             }
-            // cout <<"  "<< index_i << endl;
-        }else if(false && associativity == 2){ //fully-way
-            // cout<< tag_i <<endl;
-            // cout<< vec.size() <<endl;
-            for(int i=0; i<index_len; ++i){ //exist
-                if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
-                    vec.at(i).time = times;
-                    fout << -1 << endl;
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag) continue;
-            for(int i=0; i<index_len; ++i){ //has empty block
-                if(vec.at(i).valid == 0){
-                    vec.at(i).valid = 1;
-                    vec.at(i).tag = tag_i;
-                    vec.at(i).time = times;
-                    fout << -1 << endl;
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag) continue;
-            int min_val=99999, min_ind=0;
-            for(int i=0; i<index_len; ++i){ //miss
-                min_ind = ( vec.at(i).time < min_val)? i : min_ind;
-                min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
-            }
-            fout << vec.at(min_ind).tag << endl;
-            vec.at(min_ind).time = times;
-            vec.at(min_ind).tag = tag_i;
-        }else{ //4-way
-            // cout << index_i << endl;
+        }else{
             int search, end;
             if(associativity == 1){ //4-way
                 search = index_i*4;
@@ -149,7 +105,7 @@ int main(int argc, char **argv){
             }
             for(int i =search; i<end; ++i){ //exist
                 if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
-                    vec.at(i).time = times;
+                    if(replacement != 0) vec.at(i).time = times;
                     fout << -1 << endl;
                     flag = true;
                     break;
