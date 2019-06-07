@@ -106,7 +106,7 @@ int main(int argc, char **argv){
                 vec.at(index_i).tag = tag_i;
             }
             // cout <<"  "<< index_i << endl;
-        }else if(associativity == 2){ //fully-way
+        }else if(false || associativity == 2){ //fully-way
             // cout<< tag_i <<endl;
             // cout<< vec.size() <<endl;
             for(int i=0; i<index_len; ++i){ //exist
@@ -137,9 +137,16 @@ int main(int argc, char **argv){
             fout << vec.at(min_ind).tag << endl;
             vec.at(min_ind).time = times;
             vec.at(min_ind).tag = tag_i;
-        }else if(associativity == 1){ //4-way
+        }else{ //4-way
             // cout << index_i << endl;
-            int search = index_i*4;
+            int search, end;
+            if(associativity == 1){ //4-way
+                search = index_i*4;
+                end = search+4;
+            }else{ //fully-way
+                search = 0;
+                end = index_len;
+            }
             for(int i =search; i<search+4; ++i){ //exist
                 if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
                     vec.at(i).time = times;
