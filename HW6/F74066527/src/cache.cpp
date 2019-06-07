@@ -131,8 +131,8 @@ int main(int argc, char **argv){
                     min_ind = ( vec.at(i).time < min_val)? i : min_ind;
                     min_val = ( vec.at(i).time < min_val)? vec.at(i).time : min_val;
                 }
-            }else{ //miss LFU
-                for(int i =search; i<end; ++i){
+            }else{ //miss Your Policy
+                for(int i =search; i<end; ++i){ //LFU
                     min_ind = ( vec.at(i).fre < min_val)? i : min_ind;
                     min_val = ( vec.at(i).fre < min_val)? vec.at(i).fre : min_val;
                     if(min_val == 1) break;
@@ -145,5 +145,7 @@ int main(int argc, char **argv){
         }
     }
 
+    fin.close();
+    fout.close();
     return 0;
 }
