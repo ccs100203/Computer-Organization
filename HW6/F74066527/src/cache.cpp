@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <bitset>
-#include <sstream>
+#include <time.h>
 #include <math.h>
 #include <vector>
 using namespace std;
@@ -26,7 +26,7 @@ class block {
 };
 
 int main(int argc, char **argv){
-    stringstream ss;
+    clock_t tStart = clock();
     fstream fin, fout;
     fin.open(argv[1], ios::in);
     fout.open(argv[2], ios::out|ios::trunc);
@@ -39,10 +39,10 @@ int main(int argc, char **argv){
     int index_bit;
 
     fin >> cache_size >> block_size >> associativity >> replacement;
-    cout << "cache_size: " << cache_size << endl;
-    cout << "block_size: " << block_size << endl;
-    cout << "associativity: " << associativity << endl;
-    cout << "replacement: " << replacement << endl;
+    // cout << "cache_size: " << cache_size << endl;
+    // cout << "block_size: " << block_size << endl;
+    // cout << "associativity: " << associativity << endl;
+    // cout << "replacement: " << replacement << endl;
     index_len = cache_size*1024 / block_size;
     if(associativity == 0)
         index_bit = log2(cache_size*1024 / block_size);
@@ -51,39 +51,34 @@ int main(int argc, char **argv){
     else
         index_bit = log2(1);
     
-    cout << "index_len: " << index_len << endl;
-    cout << "index_bit: " << index_bit << endl;
+    // cout << "index_len: " << index_len << endl;
+    // cout << "index_bit: " << index_bit << endl;
+    
+    int offset_bit = log2(block_size);
+    int tag_bit = 32 - offset_bit - index_bit;
+    unsigned int temp;
     vector<block> vec;
     for(int i=0; i<index_len; ++i)
         vec.push_back(block(i));
-    int offset_bit = log2(block_size);
-    cout << "offset_bit: " << offset_bit << endl;
-    int tag_bit = 32 - offset_bit - index_bit;
-    cout << "tag_bit: " << tag_bit << endl;
-    
-    string str_h;
+    // while(fin >> hex >> temp){
+    //     temp>>=offset_bit;
+    //     tag_vec.push_back(temp>>index_bit);
+    //     index_vec.push_back(temp ^ ((temp>>index_bit)<<index_bit));
+    // }
+
+    // fin.close();
+    // fin.open(argv[1], ios::in);
+    // int trash;
+    // fin >>trash>>trash>>trash>>trash;
+
     int times = 0;
     bool flag = false;
-    while(fin >> str_h){
+    while(fin >> hex >> temp){
         flag = false;
         times++;
-        ss << hex << str_h;
-        unsigned unsign;
-        ss >> unsign;
-        bitset<32> bin(unsign);
-        ss.clear();
-
-        string index_s="";
-        string tag_s="";
-        int index_i=0;
-        int tag_i=0;
-
-        for(int i=31; i > 31-tag_bit; --i)
-            tag_s += to_string(bin[i]);
-        for(int i=31-tag_bit; i >= offset_bit; --i)
-            index_s += to_string(bin[i]);
-        if(index_s != "") index_i = stoi(index_s, nullptr, 2);
-        tag_i = stoi(tag_s, nullptr, 2);
+        temp>>=offset_bit;
+        const unsigned int tag_i = temp>>index_bit;
+        const unsigned int index_i = temp ^ ((temp>>index_bit)<<index_bit);
 
         if(associativity == 0){ //1-way
             if(vec.at(index_i).valid == 0 || vec.at(index_i).tag == tag_i){ //hit
@@ -103,24 +98,19 @@ int main(int argc, char **argv){
                 search = 0;
                 end = index_len;
             }
-            for(int i =search; i<end; ++i){ //exist
-                if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
+            for(int i =search; i<end; ++i){ //hit
+                 if(vec.at(i).valid == 0 || (vec.at(i).tag == tag_i && vec.at(i).valid == 1)){
+                    vec.at(i).tag = tag_i;
+                    fout << -1 << endl;
+                    flag = true;
+                    if(vec.at(i).valid == 0){ //empty
+                        vec.at(i).fre = 1;
+                        vec.at(i).time = times;
+                        vec.at(i).valid = 1;
+                        break;
+                    }
                     if(replacement != 0) vec.at(i).time = times;
                     vec.at(i).fre += 1;
-                    fout << -1 << endl;
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag) continue;
-            for(int i =search; i<end; ++i){ //has empty block
-                if(vec.at(i).valid == 0){
-                    vec.at(i).valid = 1;
-                    vec.at(i).tag = tag_i;
-                    vec.at(i).time = times;
-                    vec.at(i).fre = 1;
-                    fout << -1 << endl;
-                    flag = true;
                     break;
                 }
             }
@@ -147,5 +137,6 @@ int main(int argc, char **argv){
 
     fin.close();
     fout.close();
+    printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
     return 0;
 }
