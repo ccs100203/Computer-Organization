@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <bitset>
 #include <time.h>
 #include <math.h>
 #include <vector>
@@ -9,19 +8,19 @@ using namespace std;
 
 class block {
     public:
-        int index;
-        int tag;
-        int offset;
+        unsigned int index;
+        unsigned int tag;
         int time; //record last use time
         int fre; //record use frequence
         int valid;
+        int future;
         block(int i){
             this->index = i;
             this->tag = 0;
-            this->offset = 0;
             this->time = 0;
             this->valid = 0;
             this->fre = 0;
+            this->future = 0;
         }
 };
 
@@ -35,11 +34,10 @@ int main(int argc, char **argv){
     int block_size; //Byte
     int associativity;  //direct-mapped=0, 4-way=1, fully associative=2
     int replacement; //FIFO=0, LRU=1, Your Policy=2
-    int index_len;
     int index_bit;
 
     fin >> cache_size >> block_size >> associativity >> replacement;
-    index_len = cache_size*1024 / block_size;
+    int index_len = cache_size*1024 / block_size;
     if(associativity == 0)
         index_bit = log2(index_len);
     else if(associativity == 1)
@@ -55,11 +53,13 @@ int main(int argc, char **argv){
     
     int offset_bit = log2(block_size);
     int tag_bit = 32 - offset_bit - index_bit;
-    unsigned int temp;
+
+    
     vector<block> vec;
     vector<unsigned int>tag_vec, index_vec;
     for(int i=0; i<index_len; ++i)
         vec.push_back(block(i));
+    unsigned int temp;
     while(fin >> hex >> temp){
         temp>>=offset_bit;
         tag_vec.push_back(temp>>index_bit);
@@ -98,6 +98,10 @@ int main(int argc, char **argv){
                 search = 0;
                 end = index_len;
             }
+            
+            // if(!tag_vec.empty())tag_vec.erase(tag_vec.begin());
+            // if(!index_vec.empty())index_vec.erase(index_vec.begin());
+            // cout << tag_vec.size() << endl;
             for(int i =search; i<end; ++i){ //hit
                  if(vec.at(i).valid == 0 || (vec.at(i).tag == tag_i && vec.at(i).valid == 1)){
                     vec.at(i).tag = tag_i;

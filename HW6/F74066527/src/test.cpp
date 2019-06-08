@@ -11,7 +11,6 @@ class block {
     public:
         unsigned int index;
         unsigned int tag;
-        unsigned int offset;
         int time; //record last use time
         int fre; //record use frequence
         int valid;
@@ -19,7 +18,6 @@ class block {
         block(int i){
             this->index = i;
             this->tag = 0;
-            this->offset = 0;
             this->time = 0;
             this->valid = 0;
             this->fre = 0;
@@ -37,31 +35,36 @@ int main(int argc, char **argv){
     int block_size; //Byte
     int associativity;  //direct-mapped=0, 4-way=1, fully associative=2
     int replacement; // FIFO=0 , LRU=1, Your Policy=2
-    int index_len;
     int index_bit;
 
     fin >> cache_size >> block_size >> associativity >> replacement;
-    cout << "cache_size: " << cache_size << endl;
-    cout << "block_size: " << block_size << endl;
-    cout << "associativity: " << associativity << endl;
-    cout << "replacement: " << replacement << endl;
-    index_len = cache_size*1024 / block_size;
-    if(associativity == 0)
-        index_bit = log2(cache_size*1024 / block_size);
-    else if(associativity == 1)
-        index_bit = log2(cache_size*1024 / (block_size*4));
-    else
+    int index_len = cache_size*1024 / block_size;
+    // vector<block> *vec;
+    if(associativity == 0){
+        index_bit = log2(index_len);
+        // vec = new vector<block>[index_len];
+    }else if(associativity == 1){
+        index_bit = log2(index_len/4);
+        // vec = new vector<block>[index_len/4];
+    }else{
         index_bit = log2(1);
-    
-    cout << "index_len: " << index_len << endl;
-    cout << "index_bit: " << index_bit << endl;
+        // vec = new vector<block>[1];
+    }
     vector<block> vec;
     for(int i=0; i<index_len; ++i)
         vec.push_back(block(i));
+    // for(int i=0; i<index_len; ++i)
+        // vec.push_back(block(i));
     int offset_bit = log2(block_size);
-    cout << "offset_bit: " << offset_bit << endl;
     int tag_bit = 32 - offset_bit - index_bit;
-    cout << "tag_bit: " << tag_bit << endl;
+    // cout << "cache_size: " << cache_size << endl;
+    // cout << "block_size: " << block_size << endl;
+    // cout << "associativity: " << associativity << endl;
+    // cout << "replacement: " << replacement << endl;
+    // cout << "index_len: " << index_len << endl;
+    // cout << "index_bit: " << index_bit << endl;
+    // cout << "offset_bit: " << offset_bit << endl;
+    // cout << "tag_bit: " << tag_bit << endl;
     
     unsigned int temp;
     vector<unsigned int>tag_vec, index_vec;
@@ -76,11 +79,8 @@ int main(int argc, char **argv){
     int trash;
     fin >>trash>>trash>>trash>>trash;
 
-    string str_h;
-    temp=0;
     int times = 0;
     bool flag = false;
-    cout << "while" << endl;
     while(fin >> hex >> temp){
         flag = false;
         times++;
@@ -88,7 +88,6 @@ int main(int argc, char **argv){
         const unsigned int tag_i = temp>>index_bit;
         const unsigned int index_i = temp ^ ((temp>>index_bit)<<index_bit);
 
-        // cout << "split" << endl;
         if(associativity == 0){ //1-way
             if(vec.at(index_i).valid == 0 || vec.at(index_i).tag == tag_i){ //hit
                 vec.at(index_i).valid = 1;
@@ -107,11 +106,7 @@ int main(int argc, char **argv){
                 search = 0;
                 end = index_len;
             }
-            tag_vec.erase(tag_vec.begin());
-            index_vec.erase(index_vec.begin());
-            for(int i=0; i<vec.size();++i)
-                vec.at(i).future = 0;
-            for(int i =search; i<end; ++i){ //exist && empty
+            for(int i =search; i<end; ++i){ //hit
                  if(vec.at(i).valid == 0 || (vec.at(i).tag == tag_i && vec.at(i).valid == 1)){
                     vec.at(i).tag = tag_i;
                     fout << -1 << endl;
@@ -140,15 +135,14 @@ int main(int argc, char **argv){
                 //     min_val = ( vec.at(i).fre < min_val)? vec.at(i).fre : min_val;
                 //     if(min_val == 1) break;
                 // }
-                int big;
-                // cout << index_vec.size()<<endl;
-                big = (index_vec.size() < index_len)? index_vec.size() : index_len;
-                // big = index_vec.size();
+
+                int big = (index_vec.size() < 2060)? index_vec.size() : 2060;
+                // int big = index_vec.size();
                 for(int i =search; i<end; ++i){
-                    for(int j=0; j<big; ++j){
+                    for(int j=times; j<big; ++j){
                         if(vec.at(i).tag==tag_vec.at(j)){
                             vec.at(i).future +=1;
-                            continue;
+                            // continue;
                             // cout << vec.at(i).future<<endl;
                         }
                     }
