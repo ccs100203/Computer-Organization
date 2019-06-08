@@ -1,18 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <bitset>
-#include <sstream>
 #include <math.h>
 #include <vector>
 #include <algorithm>
+#include <time.h>
 using namespace std;
 
 class block {
     public:
-        int index;
-        int tag;
-        int offset;
+        unsigned int index;
+        unsigned int tag;
+        unsigned int offset;
         int time; //record last use time
         int fre; //record use frequence
         int valid;
@@ -29,7 +28,7 @@ class block {
 };
 
 int main(int argc, char **argv){
-    stringstream ss;
+    clock_t tStart = clock();
     fstream fin, fout;
     fin.open(argv[1], ios::in);
     fout.open(argv[2], ios::out|ios::trunc);
@@ -78,29 +77,18 @@ int main(int argc, char **argv){
     fin >>trash>>trash>>trash>>trash;
 
     string str_h;
+    temp=0;
     int times = 0;
     bool flag = false;
-    while(fin >> str_h){
+    cout << "while" << endl;
+    while(fin >> hex >> temp){
         flag = false;
         times++;
-        ss << hex << str_h;
-        unsigned unsign;
-        ss >> unsign;
-        bitset<32> bin(unsign);
-        ss.clear();
+        temp>>=offset_bit;
+        const unsigned int tag_i = temp>>index_bit;
+        const unsigned int index_i = temp ^ ((temp>>index_bit)<<index_bit);
 
-        string index_s="";
-        string tag_s="";
-        int index_i=0;
-        int tag_i=0;
-
-        for(int i=31; i > 31-tag_bit; --i)
-            tag_s += to_string(bin[i]);
-        for(int i=31-tag_bit; i >= offset_bit; --i)
-            index_s += to_string(bin[i]);
-        index_i = (index_s != "")? stoi(index_s, nullptr, 2) : 0;
-        tag_i = stoi(tag_s, nullptr, 2);
-
+        // cout << "split" << endl;
         if(associativity == 0){ //1-way
             if(vec.at(index_i).valid == 0 || vec.at(index_i).tag == tag_i){ //hit
                 vec.at(index_i).valid = 1;
@@ -123,24 +111,19 @@ int main(int argc, char **argv){
             index_vec.erase(index_vec.begin());
             for(int i=0; i<vec.size();++i)
                 vec.at(i).future = 0;
-            for(int i =search; i<end; ++i){ //exist
-                if(vec.at(i).tag == tag_i && vec.at(i).valid == 1){
+            for(int i =search; i<end; ++i){ //exist && empty
+                 if(vec.at(i).valid == 0 || (vec.at(i).tag == tag_i && vec.at(i).valid == 1)){
+                    vec.at(i).tag = tag_i;
+                    fout << -1 << endl;
+                    flag = true;
+                    if(vec.at(i).valid == 0){ //empty
+                        vec.at(i).fre = 1;
+                        vec.at(i).time = times;
+                        vec.at(i).valid = 1;
+                        break;
+                    }
                     if(replacement != 0) vec.at(i).time = times;
                     vec.at(i).fre += 1;
-                    fout << -1 << endl;
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag) continue;
-            for(int i =search; i<end; ++i){ //has empty block
-                if(vec.at(i).valid == 0){
-                    vec.at(i).valid = 1;
-                    vec.at(i).tag = tag_i;
-                    vec.at(i).time = times;
-                    vec.at(i).fre = 1;
-                    fout << -1 << endl;
-                    flag = true;
                     break;
                 }
             }
@@ -158,8 +141,8 @@ int main(int argc, char **argv){
                 //     if(min_val == 1) break;
                 // }
                 int big;
-                cout << index_vec.size()<<endl;
-                big = (index_vec.size() < 1000)? index_vec.size() : 1000;
+                // cout << index_vec.size()<<endl;
+                big = (index_vec.size() < index_len)? index_vec.size() : index_len;
                 // big = index_vec.size();
                 for(int i =search; i<end; ++i){
                     for(int j=0; j<big; ++j){
@@ -183,7 +166,7 @@ int main(int argc, char **argv){
             vec.at(min_ind).tag = tag_i;
         }
     }
-
+    printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
     fin.close();
     fout.close();
     return 0;
