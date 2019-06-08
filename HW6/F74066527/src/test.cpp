@@ -123,7 +123,7 @@ int main(int argc, char **argv){
                 }
             }
             if(flag) continue;
-            int min_val=99999, min_ind=0;
+            int min_val=99999, min_ind=0, max_val = 0;
             if(replacement != 2){ //miss FIFO and LRU
                 for(int i =search; i<end; ++i){
                     min_ind = ( vec.at(i).time < min_val)? i : min_ind;
@@ -139,18 +139,23 @@ int main(int argc, char **argv){
                 int big = (index_vec.size() < 2060)? index_vec.size() : 2060;
                 // int big = index_vec.size();
                 for(int i =search; i<end; ++i){
+                    vec.at(i).future = 0;
                     for(int j=times; j<big; ++j){
                         if(vec.at(i).tag==tag_vec.at(j)){
-                            vec.at(i).future +=1;
-                            // continue;
+                            vec.at(i).future = j;
+                            continue;
                             // cout << vec.at(i).future<<endl;
                         }
                     }
+                    if(vec.at(i).future == 0) vec.at(i).future = 99999;
                 }
                 for(int i =search; i<end; ++i){
-                    min_ind = ( vec.at(i).future < min_val)? i : min_ind;
-                    min_val = ( vec.at(i).future < min_val)? vec.at(i).future : min_val;
-                    if(min_val == 0) break;
+                    // min_ind = ( vec.at(i).future < min_val)? i : min_ind;
+                    // min_val = ( vec.at(i).future < min_val)? vec.at(i).future : min_val;
+                    // if(min_val == 0) break;
+                    min_ind = ( vec.at(i).future > max_val)? i : min_ind;
+                    max_val = ( vec.at(i).future > max_val)? vec.at(i).future : max_val;
+                    if(max_val == 99999) break;
                 }
 
             }
