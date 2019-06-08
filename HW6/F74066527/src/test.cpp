@@ -53,8 +53,6 @@ int main(int argc, char **argv){
     vector<block> vec;
     for(int i=0; i<index_len; ++i)
         vec.push_back(block(i));
-    // for(int i=0; i<index_len; ++i)
-        // vec.push_back(block(i));
     int offset_bit = log2(block_size);
     int tag_bit = 32 - offset_bit - index_bit;
     // cout << "cache_size: " << cache_size << endl;
@@ -135,7 +133,6 @@ int main(int argc, char **argv){
                 //     min_val = ( vec.at(i).fre < min_val)? vec.at(i).fre : min_val;
                 //     if(min_val == 1) break;
                 // }
-
                 int big = (index_vec.size() < 2060)? index_vec.size() : 2060;
                 // int big = index_vec.size();
                 for(int i =search; i<end; ++i){
