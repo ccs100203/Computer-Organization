@@ -1,0 +1,70 @@
+module traffic_light (
+    input  clk,
+    input  rst,
+    input  pass,
+    output reg R,
+    output reg G,
+    output reg Y
+);
+
+reg[11:0] count;
+
+always@(posedge clk or posedge rst)
+begin
+	if(rst)
+	begin
+		count = 0;
+	end
+	if(pass && count > 1024)
+	begin
+		count = 0;
+	end
+	count = count + 12'd1;
+	if(count > 3072)
+		count = 1;
+/****************************************/
+	if(count >= 1 && count <= 1024)//1G
+	begin
+		R = 1'b0;
+		G = 1'b1;
+		Y = 1'b0;
+	end
+	else if(count >= 1025 && count <= 1152)//2N
+	begin
+		R = 1'b0;
+		G = 1'b0;
+		Y = 1'b0;
+	end
+	else if(count >= 1153 && count <= 1280)//3G
+	begin
+		R = 1'b0;
+		G = 1'b1;
+		Y = 1'b0;
+	end
+	else if(count >= 1281 && count <= 1408)//4N
+	begin
+		R = 1'b0;
+		G = 1'b0;
+		Y = 1'b0;
+	end
+	else if(count >= 1409 && count <= 1536)//5G
+	begin
+		R = 1'b0;
+		G = 1'b1;
+		Y = 1'b0;
+	end
+	else if(count >= 1537 && count <= 2048)//6Y
+	begin
+		R = 1'b0;
+		G = 1'b0;
+		Y = 1'b1;
+	end
+	else if(count >= 2049 && count <= 3072)//7R
+	begin
+		R = 1'b1;
+		G = 1'b0;
+		Y = 1'b0;
+	end
+end
+
+endmodule
