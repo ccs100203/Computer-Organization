@@ -139,15 +139,13 @@ int main(int argc, char **argv){
                 int big = (index_vec.size() < 2060)? index_vec.size() : 2060;
                 // int big = index_vec.size();
                 for(int i =search; i<end; ++i){
-                    vec.at(i).future = 0;
+                    vec.at(i).future = 99999;
                     for(int j=times; j<big; ++j){
                         if(vec.at(i).tag==tag_vec.at(j)){
                             vec.at(i).future = j;
-                            continue;
-                            // cout << vec.at(i).future<<endl;
+                            break;
                         }
                     }
-                    if(vec.at(i).future == 0) vec.at(i).future = 99999;
                 }
                 for(int i =search; i<end; ++i){
                     // min_ind = ( vec.at(i).future < min_val)? i : min_ind;
