@@ -34,23 +34,22 @@ int main(int argc, char **argv){
     int cache_size; //KB
     int block_size; //Byte
     int associativity;  //direct-mapped=0, 4-way=1, fully associative=2
-    int replacement; // FIFO=0 , LRU=1, Your Policy=2
+    int replacement; //FIFO=0, LRU=1, Your Policy=2
     int index_len;
     int index_bit;
 
     fin >> cache_size >> block_size >> associativity >> replacement;
+    index_len = cache_size*1024 / block_size;
+    if(associativity == 0)
+        index_bit = log2(index_len);
+    else if(associativity == 1)
+        index_bit = log2(index_len/4);
+    else
+        index_bit = log2(1);
     // cout << "cache_size: " << cache_size << endl;
     // cout << "block_size: " << block_size << endl;
     // cout << "associativity: " << associativity << endl;
     // cout << "replacement: " << replacement << endl;
-    index_len = cache_size*1024 / block_size;
-    if(associativity == 0)
-        index_bit = log2(cache_size*1024 / block_size);
-    else if(associativity == 1)
-        index_bit = log2(cache_size*1024 / (block_size*4));
-    else
-        index_bit = log2(1);
-    
     // cout << "index_len: " << index_len << endl;
     // cout << "index_bit: " << index_bit << endl;
     
@@ -58,18 +57,19 @@ int main(int argc, char **argv){
     int tag_bit = 32 - offset_bit - index_bit;
     unsigned int temp;
     vector<block> vec;
+    vector<unsigned int>tag_vec, index_vec;
     for(int i=0; i<index_len; ++i)
         vec.push_back(block(i));
-    // while(fin >> hex >> temp){
-    //     temp>>=offset_bit;
-    //     tag_vec.push_back(temp>>index_bit);
-    //     index_vec.push_back(temp ^ ((temp>>index_bit)<<index_bit));
-    // }
+    while(fin >> hex >> temp){
+        temp>>=offset_bit;
+        tag_vec.push_back(temp>>index_bit);
+        index_vec.push_back(temp ^ ((temp>>index_bit)<<index_bit));
+    }
 
-    // fin.close();
-    // fin.open(argv[1], ios::in);
-    // int trash;
-    // fin >>trash>>trash>>trash>>trash;
+    fin.close();
+    fin.open(argv[1], ios::in);
+    int trash;
+    fin >>trash>>trash>>trash>>trash;
 
     int times = 0;
     bool flag = false;
