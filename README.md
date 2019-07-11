@@ -1,2 +1,2 @@
 # Computer-Organization
-## homework for Computer-Organization
+## Homework for Computer-Organization
